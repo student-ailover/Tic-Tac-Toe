@@ -49,8 +49,8 @@ LRESULT CALLBACK WindowProc(
             return 0;    
         }
 
-	// stop playing the current sound
-	PlaySound(NULL, NULL, SND_ASYNC);
+        // stop playing the current sound
+        PlaySound(NULL, NULL, SND_ASYNC);
 
         POINT cursorPos;
         cursorPos.x = LOWORD(lParam);
