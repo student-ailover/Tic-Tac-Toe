@@ -92,7 +92,7 @@ void CheckIfGameIsOver(HWND hWnd){
         
     }
 
-    else if(symbolCount == 9){
+    else if(!fGameOver && symbolCount == 9){
         winnerSymbol = ' ';
         fGameOver = TRUE;
     }
