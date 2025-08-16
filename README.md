@@ -1,4 +1,5 @@
 # Tic Tac Toe
+![Tic Tac Toe image](icon.ico)
 ## Introduction
 This is the first game that I've created using the windows API in C language. It is the original **Tic Tac Toe**, which is played by two players. In this, there is a grid of 3X3 cells which are all empty intially. Each player is assigned a symbol : either an 'X' or an 'O'. Each player takes their turn by clicking on an empty cell which fills it with his / her respective symbol. The player which manages to fill an entire row, column, or diagonal with his / her symbol wins. The sound effect of a crowd cheering is played thereafter.
 ## Player names
