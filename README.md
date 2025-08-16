@@ -10,4 +10,4 @@ The victory sound effect and the application icons are stored as .wav and .ico f
 ## Compilation
 The code is compiled using MinGw. <br>
 `gcc main.c resources.res -o "tic tac toe.exe" -lgdi32 -lwinmm -mwindows`<br>
-The gdi32 and winmm library defines the necessary functions for graphics operations and sound effect, respectively. -mwindows specifies the subsystem which the executable a purely GUI application and hence not have a console window.
+The gdi32.dll and winmm.dll libraries define the necessary functions for graphics operations and audio, respectively. -mwindows compiler option tells the compiler not to create a console window upon execution.
