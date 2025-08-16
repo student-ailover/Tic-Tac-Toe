@@ -4,10 +4,10 @@ This is the first game that I've created. It is the original **Tic Tac Toe**, wh
 ## Player names
 Before the game begins, the application looks for a "player names.sav" file in the working directory to assign the player names. If no such file is found, it creates a dialog window and prompts the user for the players' names. After the names are entered, a save file by the same name is created and the player names are stored in it. The user can also try to change the player names later by clicking on the 'Set Player Names' menu.
 When the game begins, a pseudo-random number generator decides which player will play first.
-# Creating resources
+## Creating resources
 The victory sound effect and the application icons are stored as .wav and .ico formats, respectively. A resources.res file is created by the windows resource compiler which contains these two resources.
 `windres resources.rc -O coff reosurces.res`
-# Compilation
+## Compilation
 The code is compiled using MinGw.
 `gcc main.c resources.res -o "tic tac toe.exe" -lgdi32 -lwinmm -mwindows`
 The gdi32 and winmm library defines the necessary functions for graphics operations and sound effect, respectively. -mwindows specifies the subsystem which the executable a purely GUI application and hence not have a console window.
