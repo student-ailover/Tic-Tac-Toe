@@ -1,0 +1,3 @@
+#include "resources.h"
+IDC_APP ICON "icon.ico"
+IDS_VICTORY WAVE "victory.wav"
