@@ -196,14 +196,15 @@ int APIENTRY WinMain(
     }
 
     // define and register dialog window's class
-    wc.hbrBackground = NULL;
-    wc.lpszClassName = "My Dialog Class";
-    wc.lpfnWndProc = DlgProc;
-    wc.hIcon = hIcon;
+    WNDCLASS dlgClass = {0};
+    dlgClass.hbrBackground = CreateSolidBrush(RGB(128, 128, 128));
+    dlgClass.lpszClassName = "My Dialog Class";
+    dlgClass.lpfnWndProc = DlgProc;
+    dlgClass.hIcon = hIcon;
 
-    if(!RegisterClass(&wc))
+    if(!RegisterClass(&dlgClass))
     {
-        MessageBox(NULL, "UNABLE TO REGISTER DIALOG CLAS", NULL, MB_OK);
+        MessageBox(NULL, "UNABLE TO REGISTER DIALOG CLASS", NULL, MB_OK);
         return FALSE;
     }
 
@@ -249,6 +250,10 @@ int APIENTRY WinMain(
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+
+    // delete the brushes
+    DeleteObject(wc.hbrBackground);
+    DeleteObject(dlgClass.hbrBackground);
 
     return msg.wParam;
 
