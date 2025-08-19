@@ -132,7 +132,7 @@ void CheckIfGameIsOver(HINSTANCE hInst){
     strcat(windowText, "!");
 
     if(!PlaySound(MAKEINTRESOURCE(IDS_VICTORY), hInst, SND_RESOURCE | SND_ASYNC))
-        printf("unable to play sound\n");
+        MessageBox(NULL, "UNABLE TO PLAY SOUND", NULL, MB_OK);
     
     MessageBox(hMainWnd, "You are the winner", windowText, MB_OK);
 
