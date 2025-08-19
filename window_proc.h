@@ -185,6 +185,11 @@ LRESULT CALLBACK DlgProc(
         return 0;
     }
 
+    case WM_KEYDOWN:{
+        if(wParam == VK_TAB) SetFocus(hPlayerEdit[0]);
+        return 0;
+    }
+
     case WM_PAINT:{
 
         PAINTSTRUCT ps;
