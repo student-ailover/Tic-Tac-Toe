@@ -144,8 +144,8 @@ LRESULT CALLBACK DlgProc(
             "BUTTON",
             "Remember player names",
             WS_CHILD | WS_VISIBLE | BS_CHECKBOX,
-            (rcClient.right - (rcClient.right / 5) * 2) / 2, (rcClient.bottom / 8) * 5,
-            (rcClient.right / 5) * 2, (rcClient.bottom / 8),
+            (rcClient.right - (rcClient.right / 3.5) * 2) / 2, (rcClient.bottom / 8) * 5,
+            (rcClient.right / 3.5) * 2, (rcClient.bottom / 8),
             hDlg, (HMENU) ID_CHECKBOX, NULL, NULL
         );
         
