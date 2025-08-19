@@ -112,6 +112,8 @@ LRESULT CALLBACK DlgProc(
                 hDlg, NULL, NULL, NULL
             );
             SendMessage(hPlayerEdit[i], WM_SETFONT, (WPARAM) hDlgFont, (LPARAM) 0);
+            int nameLen = strlen(playerName[i]);
+            SendMessage(hPlayerEdit[i], EM_SETSEL, (WPARAM) nameLen, (LPARAM) nameLen);
             hEditDefaultProc = (WNDPROC) SetWindowLong(hPlayerEdit[i], GWL_WNDPROC, (LONG) EditProc);
         }
         
