@@ -1,11 +1,15 @@
 #ifndef WINDOW_PROC_H
 #define WINDOW_PROC_H
 
+#define ID_CHECKBOX 1
+
 static BOOL fPlayerNamesSelected;
 static HWND hPlayerEdit[2];
+static HWND hCheckBox;
 static HWND hSaveButton;
 static WNDPROC hEditDefaultProc;
 static WNDPROC hButtonDefaultProc;
+static BOOL fRememberPlayerNames;
 
 LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
@@ -28,7 +32,7 @@ LRESULT CALLBACK EditProc(
         case VK_TAB:
             if(hEdit == hPlayerEdit[0])
                 SetFocus(hPlayerEdit[1]);
-            else if(hEdit == hPlayerEdit[1]) SetFocus(hSaveButton);
+            else if(hEdit == hPlayerEdit[1]) SetFocus(hCheckBox);
             return 0;
         
         }
@@ -52,14 +56,23 @@ LRESULT CALLBACK ButtonProc(
     case WM_KEYDOWN:
         switch (wParam)
         {
-        case VK_TAB:
-            SetFocus(hPlayerEdit[0]);
+        case VK_TAB:{
+            char buttonText[50];
+            GetWindowText(hButton, buttonText, 50);
+            if(strcmp(buttonText, "Save") == 0)
+                SetFocus(hPlayerEdit[0]);
+            else SetFocus(hSaveButton);
             return 0;
+        }
+
+        case WM_LBUTTONDOWN:{
+            
+            return 0;
+        }
 
         // when the user presses Enter while the button has keyboard focuses,
         // it programmatically generate a 'Button Click' message
         case VK_RETURN:
-            printf("enter\n");
             SendMessage(hButton, BM_CLICK, (WPARAM) 0, (LPARAM) 0);
             return 0;
         
@@ -91,6 +104,8 @@ LRESULT CALLBACK DlgProc(
 
     case WM_CREATE:{
 
+        fRememberPlayerNames = FALSE;
+
         RECT rcClient;
         GetClientRect(hDlg, &rcClient);
 
@@ -107,10 +122,10 @@ LRESULT CALLBACK DlgProc(
                 "EDIT",
                 playerName[i],
                 WS_CHILD | WS_VISIBLE | ES_UPPERCASE | WS_BORDER,
-                (rcClient.right / 5) * 2, (rcClient.bottom / 5) * (1 + i * 2),
-                (rcClient.right / 5) * 2, (rcClient.bottom / 5),
+                (rcClient.right / 5) * 2, (rcClient.bottom / 8) * (1 + i * 2),
+                (rcClient.right / 5) * 2, (rcClient.bottom / 8),
                 hDlg, NULL, NULL, NULL
-            );
+            );  
             SendMessage(hPlayerEdit[i], WM_SETFONT, (WPARAM) hDlgFont, (LPARAM) 0);
             int nameLen = strlen(playerName[i]);
             SendMessage(hPlayerEdit[i], EM_SETSEL, (WPARAM) nameLen, (LPARAM) nameLen);
@@ -124,13 +139,28 @@ LRESULT CALLBACK DlgProc(
             return -1;
         }
 
+        // create a checkbox
+        hCheckBox = CreateWindow(
+            "BUTTON",
+            "Remember player names",
+            WS_CHILD | WS_VISIBLE | BS_CHECKBOX,
+            (rcClient.right - (rcClient.right / 5) * 2) / 2, (rcClient.bottom / 8) * 5,
+            (rcClient.right / 5) * 2, (rcClient.bottom / 8),
+            hDlg, (HMENU) ID_CHECKBOX, NULL, NULL
+        );
+        
+        if(!hCheckBox){
+            MessageBox(NULL, "UNABLE TO CREATE CHECK BOX", NULL, MB_OK);
+            return -1;
+        }
+
         // create a save button
         hSaveButton = CreateWindow(
             "BUTTON",
             "Save",
             WS_CHILD | WS_VISIBLE,
-            (rcClient.right - (rcClient.right / 5) * 2) / 2, (rcClient.bottom / 5) * 4,
-            (rcClient.right / 5) * 2, (rcClient.bottom / 5),
+            (rcClient.right - (rcClient.right / 5) * 2) / 2, (rcClient.bottom / 8) * 7,
+            (rcClient.right / 5) * 2, (rcClient.bottom / 8),
             hDlg, NULL, NULL, NULL
         );
         
@@ -140,8 +170,9 @@ LRESULT CALLBACK DlgProc(
             return -1;
         }
 
-        // subclass its procedure
+        // subclass its procedures of the save button and the check box
         hButtonDefaultProc = (WNDPROC) SetWindowLong(hSaveButton, GWL_WNDPROC, (LONG) ButtonProc);
+        SetWindowLong(hCheckBox, GWL_WNDPROC, (LONG) ButtonProc);
 
         // set keyboard focus to first edit control
         SetFocus(hPlayerEdit[0]);
@@ -162,17 +193,18 @@ LRESULT CALLBACK DlgProc(
         RECT rcDlg;
         GetClientRect(hDlg, &rcDlg);
 
+        // draw the text next to edit controls
         HFONT hOriginalFont = SelectObject(hDC, hDlgFont);
 
         RECT rcText;
         rcText.left = 0;
         rcText.right = (rcDlg.right / 5) * 2;
-        rcText.top = (rcDlg.bottom / 5) * 1;
-        rcText.bottom = (rcDlg.bottom / 5) * 2;
+        rcText.top = (rcDlg.bottom / 8) * 1;
+        rcText.bottom = (rcDlg.bottom / 8) * 2;
         DrawText(hDC, "Player 1:", -1, &rcText, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-        rcText.top += (rcDlg.bottom / 5) * 2;
-        rcText.bottom += (rcDlg.bottom / 5) * 2;
+        rcText.top += (rcDlg.bottom / 8) * 2;
+        rcText.bottom += (rcDlg.bottom / 8) * 2;
         DrawText(hDC, "Player 2:", -1, &rcText, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
         SelectObject(hDC, hOriginalFont);
@@ -186,28 +218,28 @@ LRESULT CALLBACK DlgProc(
         // change made here
         if(HIWORD(wParam) != BN_CLICKED) return 0;
 
+        switch (LOWORD(wParam))
+        {
+        case ID_CHECKBOX:
+            CheckDlgButton(hDlg, ID_CHECKBOX, IsDlgButtonChecked(hDlg, ID_CHECKBOX)? BST_UNCHECKED : BST_CHECKED);
+            fRememberPlayerNames = !fRememberPlayerNames;
+            return 0;
+        
+        default:
+            break;
+        }
+
         // when save button is clicked
         // if either edit control is empty then ignore the click
-        else if(!GetWindowTextLength(hPlayerEdit[0]) || !GetWindowTextLength(hPlayerEdit[1]))
+        if(!GetWindowTextLength(hPlayerEdit[0]) || !GetWindowTextLength(hPlayerEdit[1]))
             return 0;
 
         fPlayerNamesSelected = TRUE;
 
-        // retrieve the player names from their respective edit controls and save in the
-        // "player names.sav" file
+        // retrieve the player names from their respective edit controls
         GetWindowText(hPlayerEdit[0], playerName[0], sizeof(playerName[0]));
         GetWindowText(hPlayerEdit[1], playerName[1], sizeof(playerName[0]));
-        printf("%s\n", playerName[0]);
 
-        FILE *fp = fopen("player names.sav", "w");
-        if(!fp)
-        {
-            MessageBox(NULL, "UNABLE TO SAVE PLAYER NAMES", NULL, MB_OK);
-            return 0;
-        }
-        fprintf(fp, "%s %s", playerName[0], playerName[1]);
-        fclose(fp);
-        
         // set the proper title for the main window
         char mainWndTitle[50];
         strcpy(mainWndTitle, "Now, it is ");
@@ -219,6 +251,23 @@ LRESULT CALLBACK DlgProc(
         EnableWindow(hMainWnd, TRUE);
         ShowWindow(hMainWnd, SW_NORMAL);
         DestroyWindow(hDlg);
+
+        // if the user has selected the player names to be remembered, then
+        // save them in the "player names.sav" file
+        if(fRememberPlayerNames){
+            FILE *fp = fopen("player names.sav", "w");
+            if(!fp)
+            {
+                MessageBox(NULL, "UNABLE TO SAVE PLAYER NAMES", NULL, MB_OK);
+                return 0;
+            }
+            fprintf(fp, "%s %s", playerName[0], playerName[1]);
+            fclose(fp);
+        }
+        // otherwise, delete the save file
+        else{
+            DeleteFile("player names.sav");
+        }
 
         return 0;
     }
@@ -296,7 +345,6 @@ LRESULT CALLBACK MainWndProc(
 
     case WM_COMMAND:{
 
-        printf("here\n");
         switch(LOWORD(wParam)){
 
             case IDM_SET_PLAYER_NAMES:
