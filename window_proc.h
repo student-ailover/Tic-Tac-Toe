@@ -111,7 +111,7 @@ LRESULT CALLBACK DlgProc(
 
         // create a font for the dialog
         hDlgFont = CreateFont(
-            rcClient.bottom / 5 - 5,
+            rcClient.bottom / 8 - 5,
             0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
                 CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman")
         );
