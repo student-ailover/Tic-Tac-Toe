@@ -149,9 +149,11 @@ BOOL AskPlayerNames(){
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
+    // 0.0375
     HWND hDlg = CreateWindow(
         "My Dialog Class", "Enter the player names", WS_SYSMENU | WS_BORDER | WS_VISIBLE,
-        screenWidth / 2.5, screenHeight / 2.5, screenWidth / 5, screenHeight / 5,
+        (screenWidth - screenWidth / 4) / 2, (screenHeight - screenHeight / 4) / 2,
+        screenWidth / 4, screenHeight / 4,
         NULL, NULL, NULL, NULL
     );
     if(!hDlg)
